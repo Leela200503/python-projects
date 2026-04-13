@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login
@@ -32,9 +33,12 @@ def register_view(request):
         form = RegisterForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
-            user.role = 'admin' if user.is_superuser else 'student'
+            user.role = form.cleaned_data.get('role', 'student')
             user.save()
+            messages.success(request, 'Successfully created your account! Please log in to continue.')
             return redirect('login')
+        else:
+            messages.error(request, 'Please correct the errors below and try again.')
     else:
         form = RegisterForm()
     return render(request, 'registration/register.html', {'form': form})

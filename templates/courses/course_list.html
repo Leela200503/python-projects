@@ -17,10 +17,14 @@
           <p class="card-text">{{ course.description|truncatewords:20 }}</p>
         </div>
         <div class="card-footer bg-transparent border-0 text-center pb-4">
-          {% if request.user.role == 'student' %}
+          {% if user.is_authenticated and user.role == 'student' %}
             <a href="{% url 'view_lessons' course.id %}" class="btn btn-primary btn-sm px-4">View Lessons</a>
-          {% elif request.user.role == 'admin' or request.user == course.instructor %}
+          {% elif user.is_authenticated and user.role == 'admin' %}
             <a href="{% url 'add_lesson' course.id %}" class="btn btn-outline-primary btn-sm px-4">Manage Lessons</a>
+          {% elif user.is_authenticated and user.role == 'instructor' %}
+            <a href="{% url 'add_lesson' course.id %}" class="btn btn-outline-primary btn-sm px-4">Manage Lessons</a>
+          {% else %}
+            <a href="{% url 'login' %}" class="btn btn-primary btn-sm px-4">Log in to browse</a>
           {% endif %}
         </div>
       </div>
@@ -31,11 +35,22 @@
     <p class="text-muted text-center">No courses available right now.</p>
   {% endif %}
 
-  {% if request.user.role in 'admin instructor' %}
+  {% if user.is_authenticated and user.role == 'admin' %}
     <div class="text-center mt-4">
       <a href="{% url 'course_create' %}" class="btn btn-success">
         + Create New Course
       </a>
+    </div>
+  {% elif user.is_authenticated and user.role == 'instructor' %}
+    <div class="text-center mt-4">
+      <a href="{% url 'course_create' %}" class="btn btn-success">
+        + Create New Course
+      </a>
+    </div>
+  {% elif not user.is_authenticated %}
+    <div class="text-center mt-4">
+      <a href="{% url 'register' %}" class="btn btn-primary me-2">Sign up to browse</a>
+      <a href="{% url 'login' %}" class="btn btn-outline-secondary">Login</a>
     </div>
   {% endif %}
 </div>

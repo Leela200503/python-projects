@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Course, Lesson, Enrollment, LessonProgress
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from users.models import CustomUser
 from django.template.loader import render_to_string
 from django.http import HttpResponse
@@ -12,7 +13,6 @@ import io
 def landing_view(request):
     return render(request, 'landing.html')
 
-@login_required
 def course_list(request):
     courses = Course.objects.all()
     return render(request, 'courses/course_list.html', {'courses': courses})
@@ -20,6 +20,7 @@ def course_list(request):
 @login_required
 def create_course(request):
     if request.user.role not in ['admin', 'instructor']:
+        messages.warning(request, 'You need instructor access to create courses.')
         return redirect('course_list')
 
     if request.method == 'POST':
@@ -27,6 +28,7 @@ def create_course(request):
         description = request.POST['description']
         image = request.FILES.get('image')
         Course.objects.create(title=title, description=description, instructor=request.user, image=image)
+        messages.success(request, 'Course created successfully!')
         return redirect('course_create')
 
     courses = Course.objects.filter(instructor=request.user)
