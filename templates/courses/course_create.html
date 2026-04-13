@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container animate-fade py-5">
+  <div class="row g-5">
+
+    <!-- Create Course Form -->
+    <div class="col-lg-5">
+      <div class="glass-card p-4">
+        <h3 class="fw-bold mb-1">🚀 Create New Course</h3>
+        <p class="text-muted mb-4">Fill in the details to publish a new course</p>
+
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label for="title" class="form-label fw-semibold">Course Title</label>
+            <input type="text" name="title" id="title" class="form-control" placeholder="e.g., Python for Beginners" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="description" class="form-label fw-semibold">Course Description</label>
+            <textarea name="description" id="description" rows="4" class="form-control" placeholder="Describe what students will learn..."></textarea>
+          </div>
+
+          <div class="mb-3">
+            <label for="image" class="form-label fw-semibold">Course Image <span class="text-muted fw-normal">(optional)</span></label>
+            <input type="file" name="image" id="image" class="form-control" accept="image/*">
+            <div class="form-text">Recommended: 1280×720px, JPG or PNG.</div>
+          </div>
+
+          <div class="d-grid">
+            <button type="submit" class="btn btn-primary btn-lg">Create Course</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Existing Courses -->
+    <div class="col-lg-7">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="fw-bold mb-0">📚 Your Courses</h4>
+        <span class="badge bg-primary fs-6">{{ courses|length }} total</span>
+      </div>
+
+      {% if courses %}
+        <div class="row row-cols-1 g-3">
+          {% for course in courses %}
+          <div class="col">
+            <div class="glass-card p-0 overflow-hidden d-flex" style="flex-direction: row; min-height: 110px;">
+              {% if course.image %}
+                <img src="{{ course.image.url }}" alt="{{ course.title }}"
+                  style="width: 120px; object-fit: cover; flex-shrink: 0;">
+              {% else %}
+                <div style="width: 120px; background: linear-gradient(135deg, var(--primary), #818CF8); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 2rem;">📘</div>
+              {% endif %}
+              <div class="p-3 d-flex flex-column justify-content-between flex-grow-1">
+                <div>
+                  <h5 class="fw-bold mb-1">{{ course.title }}</h5>
+                  <p class="text-muted small mb-2">{{ course.description|truncatechars:80 }}</p>
+                </div>
+                <div class="d-flex gap-2">
+                  <a href="{% url 'add_lesson' course.id %}" class="btn btn-sm btn-outline-primary">Manage Lessons</a>
+                  <a href="{% url 'edit_course' course.id %}" class="btn btn-sm btn-outline-secondary">Edit</a>
+                  <a href="{% url 'delete_course' course.id %}" class="btn btn-sm btn-outline-danger">Delete</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="glass-card text-center p-5 text-muted">
+          <p class="mb-0 fs-5">📭 No courses yet. Create your first one!</p>
+        </div>
+      {% endif %}
+    </div>
+
+  </div>
+</div>
+{% endblock %}

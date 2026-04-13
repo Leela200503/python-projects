@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container animate-fade py-5">
+  <div class="row g-4">
+
+    <!-- Add Lesson Form -->
+    <div class="col-lg-5">
+      <div class="glass-card p-4">
+        <h3 class="fw-bold mb-1">➕ Add Lesson</h3>
+        <p class="text-muted mb-4">to <strong>{{ course.title }}</strong></p>
+
+        <form method="post" novalidate>
+          {% csrf_token %}
+          <div class="mb-3">
+            <label for="title" class="form-label fw-semibold">Lesson Title</label>
+            <input type="text" name="title" id="title" class="form-control" placeholder="e.g., Introduction to Variables" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="content" class="form-label fw-semibold">Lesson Content</label>
+            <textarea name="content" id="content" rows="5" class="form-control" placeholder="Write the lesson content here..."></textarea>
+          </div>
+
+          <div class="mb-3">
+            <label for="video_url" class="form-label fw-semibold">Video URL <span class="text-muted fw-normal">(optional)</span></label>
+            <input type="url" name="video_url" id="video_url" class="form-control" placeholder="https://www.youtube.com/watch?v=...">
+          </div>
+
+          <div class="mb-3">
+            <label for="order" class="form-label fw-semibold">Lesson Order</label>
+            <input type="number" name="order" id="order" class="form-control" value="0" min="0" placeholder="0">
+            <div class="form-text">Lower numbers appear first. Use this to control lesson sequence.</div>
+          </div>
+
+          <div class="d-grid">
+            <button type="submit" class="btn btn-primary btn-lg">Add Lesson</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Lessons List -->
+    <div class="col-lg-7">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="fw-bold mb-0">📋 Lessons in this Course</h4>
+        <span class="badge bg-primary fs-6">{{ lessons|length }} total</span>
+      </div>
+
+      {% if lessons %}
+        <div class="accordion" id="lessonAccordion">
+          {% for lesson in lessons %}
+          <div class="glass-card mb-3 overflow-hidden">
+            <div class="accordion-item border-0 bg-transparent">
+              <h2 class="accordion-header" id="heading{{ forloop.counter }}">
+                <button class="accordion-button collapsed fw-semibold bg-transparent" type="button"
+                  data-bs-toggle="collapse" data-bs-target="#collapse{{ forloop.counter }}"
+                  style="box-shadow: none;">
+                  <span class="badge bg-light text-dark me-2">{{ lesson.order }}</span>
+                  {{ lesson.title }}
+                </button>
+              </h2>
+              <div id="collapse{{ forloop.counter }}" class="accordion-collapse collapse" data-bs-parent="#lessonAccordion">
+                <div class="accordion-body pt-0">
+                  <hr class="mt-0">
+                  <p>{{ lesson.content|truncatewords:40 }}</p>
+
+                  {% if "youtube.com" in lesson.video_url or "youtu.be" in lesson.video_url %}
+                    <div class="ratio ratio-16x9 mb-3" style="border-radius: 12px; overflow: hidden;">
+                      <iframe src="https://www.youtube.com/embed/{{ lesson.video_url|cut:'https://www.youtube.com/watch?v='|cut:'https://youtu.be/' }}" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                  {% elif lesson.video_url %}
+                    <video src="{{ lesson.video_url }}" class="w-100 mb-3" controls style="border-radius: 12px;"></video>
+                  {% endif %}
+
+                  {% if request.user == course.instructor or request.user.is_superuser %}
+                    <div class="d-flex gap-2">
+                      <a href="{% url 'edit_lesson' lesson.id %}" class="btn btn-sm btn-outline-primary px-3">✏️ Edit</a>
+                      <a href="{% url 'delete_lesson' lesson.id %}" class="btn btn-sm btn-outline-danger px-3">🗑️ Delete</a>
+                    </div>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="glass-card text-center p-5 text-muted">
+          <p class="mb-0 fs-5">📭 No lessons added yet. Create your first one!</p>
+        </div>
+      {% endif %}
+    </div>
+
+  </div>
+</div>
+{% endblock %}

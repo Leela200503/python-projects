@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container animate-fade py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-7">
+      <div class="glass-card p-4">
+        <h2 class="fw-bold mb-1 text-center">✏️ Edit Lesson</h2>
+        <p class="text-muted text-center mb-4">{{ lesson.title }}</p>
+
+        <form method="post">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Lesson Title</label>
+            <input type="text" name="title" value="{{ lesson.title }}" class="form-control" required>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Lesson Content</label>
+            <textarea name="content" rows="5" class="form-control">{{ lesson.content }}</textarea>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Video URL</label>
+            <input type="url" name="video_url" value="{{ lesson.video_url }}" class="form-control">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Lesson Order</label>
+            <input type="number" name="order" value="{{ lesson.order }}" class="form-control" min="0">
+            <div class="form-text">Lower numbers appear first in the lesson list.</div>
+          </div>
+
+          <div class="d-grid gap-2">
+            <button type="submit" class="btn btn-primary btn-lg">💾 Update Lesson</button>
+            <a href="{% url 'add_lesson' lesson.course.id %}" class="btn btn-outline-secondary">← Back to Lessons</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

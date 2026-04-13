@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container animate-fade py-5">
+
+  <!-- Course Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="fw-bold mb-1">{{ course.title }}</h2>
+      <p class="text-muted mb-0">Instructor: <strong>{{ course.instructor.get_full_name|default:course.instructor.username }}</strong></p>
+    </div>
+    <a href="{% url 'course_list' %}" class="btn btn-outline-primary btn-sm">← Back to Courses</a>
+  </div>
+
+  <!-- Progress Bar (Students only) -->
+  {% if request.user.role == 'student' %}
+  <div class="glass-card p-4 mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <span class="fw-semibold">Your Progress</span>
+      <span class="fw-bold text-primary">{{ progress_percentage|floatformat:0 }}%</span>
+    </div>
+    <div class="progress" style="height: 14px;">
+      <div class="progress-bar" role="progressbar"
+        style="width: {{ progress_percentage }}%;"
+        aria-valuenow="{{ progress_percentage }}" aria-valuemin="0" aria-valuemax="100">
+      </div>
+    </div>
+
+    {% if is_fully_completed %}
+    <div class="mt-3 text-center">
+      <span class="badge bg-success fs-6 px-4 py-2 mb-2">🎉 Course Completed!</span>
+      <div>
+        <a href="{% url 'download_certificate' course.id %}" class="btn btn-success mt-2 px-5">
+          🎓 Download Certificate
+        </a>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+  {% endif %}
+
+  <!-- Lessons Accordion -->
+  {% if lessons %}
+    <div class="accordion" id="lessonAccordion">
+      {% for lesson in lessons %}
+      <div class="glass-card mb-3 overflow-hidden animate-fade delay-{{ forloop.counter }}">
+        <div class="accordion-item border-0 bg-transparent">
+          <h2 class="accordion-header" id="heading{{ forloop.counter }}">
+            <button class="accordion-button collapsed fw-semibold bg-transparent" type="button"
+              data-bs-toggle="collapse" data-bs-target="#collapse{{ forloop.counter }}"
+              style="box-shadow: none;">
+              <span class="me-2 text-muted fw-normal">{{ forloop.counter }}.</span>
+              {{ lesson.title }}
+              {% if lesson.is_completed %}
+                <span class="badge bg-success ms-3 fw-normal">✅ Completed</span>
+              {% endif %}
+            </button>
+          </h2>
+          <div id="collapse{{ forloop.counter }}" class="accordion-collapse collapse" data-bs-parent="#lessonAccordion">
+            <div class="accordion-body pt-0">
+              <hr class="mt-0">
+              <p class="mb-3" style="line-height: 1.8;">{{ lesson.content|linebreaksbr }}</p>
+
+              {% if "youtube.com" in lesson.video_url or "youtu.be" in lesson.video_url %}
+                <div class="ratio ratio-16x9 mt-3 mb-3" style="border-radius: 12px; overflow: hidden;">
+                  <iframe
+                    src="https://www.youtube.com/embed/{{ lesson.video_url|cut:'https://www.youtube.com/watch?v='|cut:'https://youtu.be/' }}"
+                    title="YouTube video" frameborder="0" allowfullscreen>
+                  </iframe>
+                </div>
+              {% elif lesson.video_url %}
+                <div class="mt-3 mb-3" style="border-radius: 12px; overflow: hidden;">
+                  <video controls class="w-100">
+                    <source src="{{ lesson.video_url }}" type="video/mp4">
+                    Your browser does not support the video tag.
+                  </video>
+                </div>
+              {% endif %}
+
+              {% if request.user.role == 'student' %}
+                <div class="mt-3">
+                  {% if lesson.is_completed %}
+                    <span class="badge bg-success px-3 py-2">✅ Lesson Completed</span>
+                  {% else %}
+                    <form method="post" action="{% url 'mark_lesson_complete' lesson.id %}">
+                      {% csrf_token %}
+                      <button type="submit" class="btn btn-success btn-sm">✅ Mark as Completed</button>
+                    </form>
+                  {% endif %}
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="glass-card text-center p-5 text-muted">
+      <p class="mb-0 fs-5">📭 No lessons have been added to this course yet.</p>
+    </div>
+  {% endif %}
+
+</div>
+{% endblock %}

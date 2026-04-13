@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container animate-fade py-5">
+
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-center mb-5">
+    <div>
+      <h2 class="fw-bold mb-1">👨‍🏫 Instructor Dashboard</h2>
+      <p class="text-muted mb-0">Welcome back, <strong>{{ request.user.get_full_name|default:request.user.username }}</strong></p>
+    </div>
+    <div class="d-flex gap-2">
+      <a href="{% url 'course_create' %}" class="btn btn-primary">+ Create Course</a>
+      <a href="{% url 'logout' %}" class="btn btn-outline-danger">Logout</a>
+    </div>
+  </div>
+
+  <!-- Stats Cards Row -->
+  <div class="row g-4 mb-5">
+    <div class="col-md-4">
+      <div class="glass-card p-4 text-center">
+        <div style="font-size: 2.5rem; font-weight: 800; color: var(--primary);">{{ total_courses }}</div>
+        <div class="text-muted fw-semibold">Your Courses</div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="glass-card p-4 text-center">
+        <div style="font-size: 2.5rem; font-weight: 800; color: var(--secondary);">{{ total_enrollments }}</div>
+        <div class="text-muted fw-semibold">Total Enrollments</div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="glass-card p-4 text-center">
+        <div style="font-size: 2.5rem; font-weight: 800; color: #F59E0B;">{{ courses|length }}</div>
+        <div class="text-muted fw-semibold">Active Courses</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts Row -->
+  <div class="row g-4 mb-5">
+    <div class="col-lg-6">
+      <div class="glass-card p-4">
+        <h5 class="fw-bold mb-3">📊 Student Enrollments per Course</h5>
+        <canvas id="enrollmentChart" height="280"></canvas>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="glass-card p-4">
+        <h5 class="fw-bold mb-3">📈 Completion Rates (%)</h5>
+        <canvas id="completionChart" height="280"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Course Cards -->
+  <h4 class="fw-bold mb-3">📚 Your Courses</h4>
+  {% if courses %}
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+      {% for course in courses %}
+      <div class="col">
+        <div class="glass-card p-4 h-100">
+          <h5 class="fw-bold">{{ course.title }}</h5>
+          <p class="text-muted">{{ course.description|truncatewords:15 }}</p>
+          <div class="d-flex gap-2 mt-auto">
+            <a href="{% url 'add_lesson' course.id %}" class="btn btn-sm btn-outline-primary">Manage Lessons</a>
+            <a href="{% url 'edit_course' course.id %}" class="btn btn-sm btn-outline-secondary">Edit</a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="glass-card text-center p-5 text-muted">
+      <p class="mb-0 fs-5">You haven't created any courses yet. Get started!</p>
+    </div>
+  {% endif %}
+
+</div>
+
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+  const courseNames = {{ course_names_json|safe }};
+  const enrollmentCounts = {{ enrollment_counts_json|safe }};
+  const completionRates = {{ completion_rates_json|safe }};
+
+  // Enrollment Bar Chart
+  new Chart(document.getElementById('enrollmentChart'), {
+    type: 'bar',
+    data: {
+      labels: courseNames,
+      datasets: [{
+        label: 'Enrollments',
+        data: enrollmentCounts,
+        backgroundColor: 'rgba(79, 70, 229, 0.7)',
+        borderColor: 'rgba(79, 70, 229, 1)',
+        borderWidth: 2,
+        borderRadius: 8,
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+      },
+      scales: {
+        y: { beginAtZero: true, ticks: { stepSize: 1 } }
+      }
+    }
+  });
+
+  // Completion Doughnut Chart
+  new Chart(document.getElementById('completionChart'), {
+    type: 'doughnut',
+    data: {
+      labels: courseNames,
+      datasets: [{
+        data: completionRates,
+        backgroundColor: [
+          'rgba(79, 70, 229, 0.8)',
+          'rgba(16, 185, 129, 0.8)',
+          'rgba(245, 158, 11, 0.8)',
+          'rgba(239, 68, 68, 0.8)',
+          'rgba(99, 102, 241, 0.8)',
+          'rgba(20, 184, 166, 0.8)',
+        ],
+        borderWidth: 2,
+        borderColor: '#fff',
+      }]
+    },
+    options: {
+      responsive: true,
+      cutout: '55%',
+      plugins: {
+        legend: { position: 'bottom' },
+      }
+    }
+  });
+</script>
+{% endblock %}

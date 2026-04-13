@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    @page {
+      size: A4 landscape;
+      margin: 0;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Georgia, serif;
+      background: #ffffff;
+    }
+
+    .certificate-wrapper {
+      width: 297mm;
+      height: 210mm;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #ffffff;
+    }
+
+    /* Outer decorative border */
+    .outer-border {
+      position: absolute;
+      top: 10mm;
+      left: 10mm;
+      right: 10mm;
+      bottom: 10mm;
+      border: 4pt solid #4F46E5;
+    }
+
+    /* Inner decorative border */
+    .inner-border {
+      position: absolute;
+      top: 14mm;
+      left: 14mm;
+      right: 14mm;
+      bottom: 14mm;
+      border: 1pt solid #818CF8;
+    }
+
+    .content {
+      text-align: center;
+      padding: 18mm 25mm;
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .logo {
+      font-size: 24pt;
+      font-weight: bold;
+      color: #4F46E5;
+      letter-spacing: 3pt;
+      text-transform: uppercase;
+      margin-bottom: 4mm;
+    }
+
+    .logo-tagline {
+      font-size: 9pt;
+      color: #818CF8;
+      letter-spacing: 2pt;
+      text-transform: uppercase;
+      margin-bottom: 10mm;
+    }
+
+    .divider {
+      border: none;
+      border-top: 1pt solid #E0E7FF;
+      margin: 4mm auto;
+      width: 60%;
+    }
+
+    .cert-title {
+      font-size: 30pt;
+      color: #1E293B;
+      font-weight: normal;
+      letter-spacing: 4pt;
+      text-transform: uppercase;
+      margin-bottom: 3mm;
+      font-style: italic;
+    }
+
+    .cert-subtitle {
+      font-size: 10pt;
+      color: #64748B;
+      letter-spacing: 2pt;
+      margin-bottom: 6mm;
+    }
+
+    .of-completion {
+      font-size: 11pt;
+      color: #475569;
+      margin-bottom: 6mm;
+    }
+
+    .student-name {
+      font-size: 32pt;
+      color: #4F46E5;
+      font-weight: bold;
+      margin: 3mm 0;
+      letter-spacing: 2pt;
+    }
+
+    .completion-text {
+      font-size: 11pt;
+      color: #475569;
+      margin: 4mm 0;
+    }
+
+    .course-title {
+      font-size: 20pt;
+      color: #1E293B;
+      font-weight: bold;
+      margin: 3mm 0;
+    }
+
+    .footer-section {
+      margin-top: 10mm;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      padding: 0 12mm;
+    }
+
+    .signature-block {
+      text-align: center;
+      width: 60mm;
+    }
+
+    .signature-line {
+      border-top: 1pt solid #1E293B;
+      margin-bottom: 2mm;
+    }
+
+    .signature-label {
+      font-size: 8pt;
+      color: #64748B;
+      text-transform: uppercase;
+      letter-spacing: 1pt;
+    }
+
+    .seal {
+      font-size: 28pt;
+    }
+  </style>
+</head>
+<body>
+  <div class="certificate-wrapper">
+    <div class="outer-border"></div>
+    <div class="inner-border"></div>
+    <div class="content">
+      <div class="logo">SkillSphere</div>
+      <div class="logo-tagline">Learning Management System</div>
+
+      <hr class="divider">
+
+      <div class="cert-title">Certificate</div>
+      <div class="cert-subtitle">of Achievement</div>
+
+      <div class="of-completion">This is to proudly certify that</div>
+
+      <div class="student-name">{{ user.get_full_name|default:user.username }}</div>
+
+      <div class="completion-text">has successfully completed all lessons in the course</div>
+
+      <div class="course-title">&ldquo;{{ course.title }}&rdquo;</div>
+
+      <div class="completion-text">and is hereby awarded this Certificate of Completion.</div>
+
+      <div class="footer-section">
+        <div class="signature-block">
+          <div class="signature-line"></div>
+          <div class="signature-label">Instructor: {{ course.instructor.get_full_name|default:course.instructor.username }}</div>
+        </div>
+
+        <div class="seal">🎓</div>
+
+        <div class="signature-block">
+          <div class="signature-line"></div>
+          <div class="signature-label">SkillSphere Platform</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

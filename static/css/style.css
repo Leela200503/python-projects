@@ -1,0 +1,171 @@
+/* Modern Premium Styling for SkillSphere */
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  --primary: #4F46E5;
+  --primary-hover: #4338CA;
+  --secondary: #10B981;
+  --dark-bg: #0F172A;
+  --light-bg: #F8FAFC;
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.4);
+  --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  --card-hover-shadow: 0 20px 40px rgba(79, 70, 229, 0.15);
+  --text-dark: #1E293B;
+  --text-muted: #64748B;
+  --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background-color: var(--light-bg);
+  background-image: 
+    radial-gradient(at 0% 0%, hsla(253,16%,7%,0.03) 0, transparent 50%), 
+    radial-gradient(at 50% 0%, hsla(225,39%,30%,0.05) 0, transparent 50%), 
+    radial-gradient(at 100% 0%, hsla(339,49%,30%,0.05) 0, transparent 50%);
+  color: var(--text-dark);
+  min-height: 100vh;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Glassmorphism Cards */
+.card, .glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  box-shadow: var(--card-shadow);
+  transition: var(--transition);
+  overflow: hidden;
+}
+
+.card:hover, .glass-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--card-hover-shadow);
+  border-color: rgba(79, 70, 229, 0.3);
+}
+
+/* Navbar Tuning */
+.navbar {
+  background: rgba(15, 23, 42, 0.95) !important;
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.navbar-brand {
+  font-weight: 800;
+  font-size: 1.5rem;
+  letter-spacing: -0.5px;
+  background: linear-gradient(135deg, #A5B4FC, #818CF8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.nav-link {
+  font-weight: 500;
+  color: #CBD5E1 !important;
+  transition: var(--transition);
+}
+
+.nav-link:hover {
+  color: #fff !important;
+  transform: translateY(-1px);
+}
+
+/* Buttons */
+.btn {
+  font-weight: 600;
+  border-radius: 10px;
+  padding: 0.6rem 1.5rem;
+  transition: var(--transition);
+  text-transform: capitalize;
+  letter-spacing: 0.3px;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+  border: none;
+  box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(79, 70, 229, 0.4);
+}
+
+.btn-success {
+  background: linear-gradient(135deg, var(--secondary), #059669);
+  border: none;
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+}
+
+.btn-success:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+}
+
+.btn-outline-primary {
+  color: var(--primary);
+  border-color: var(--primary);
+  border-width: 2px;
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--primary);
+  color: #fff;
+}
+
+/* Typography Overrides */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.text-muted {
+  color: var(--text-muted) !important;
+}
+
+/* Layout Utilities */
+main {
+  flex: 1;
+  padding-bottom: 3rem;
+}
+
+/* Footer Details */
+footer {
+  background: white;
+  border-top: 1px solid rgba(0,0,0,0.05);
+  margin-top: auto;
+}
+
+/* Dashboard Progress bar */
+.progress {
+  height: 12px;
+  border-radius: 20px;
+  background-color: #E2E8F0;
+  overflow: hidden;
+}
+
+.progress-bar {
+  background: linear-gradient(90deg, var(--primary), #818CF8);
+  border-radius: 20px;
+  box-shadow: 0 0 10px rgba(79, 70, 229, 0.5);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade {
+  animation: fadeIn 0.6s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+}
+
+.delay-1 { animation-delay: 0.1s; }
+.delay-2 { animation-delay: 0.2s; }
+.delay-3 { animation-delay: 0.3s; }
